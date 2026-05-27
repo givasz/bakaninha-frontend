@@ -1,0 +1,67 @@
+.item-modal {
+  border-radius: var(--radius) var(--radius) 0 0;
+  overflow: hidden;
+}
+
+.item-modal-image {
+  position: relative; width: 100%; height: 240px; overflow: hidden;
+  background: var(--bg);
+}
+.item-modal-image img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.item-img-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+.item-modal-close {
+  position: absolute; top: 12px; right: 12px;
+  background: rgba(255,255,255,0.9) !important;
+  color: var(--cream) !important;
+  backdrop-filter: blur(4px);
+}
+
+.item-modal-body { padding: 24px; }
+
+.item-modal-name {
+  font-family: var(--font-display); font-size: 28px;
+  letter-spacing: 1px; color: var(--cream); margin-bottom: 8px;
+}
+.item-modal-desc {
+  color: var(--gray-light); font-size: 14px; line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.variant-section { margin-bottom: 20px; }
+.variant-label {
+  font-size: 12px; font-weight: 700; color: var(--gray);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+}
+.variant-options { display: flex; flex-direction: column; gap: 8px; }
+.variant-btn {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; border-radius: var(--radius-sm);
+  background: var(--dark); border: 2px solid var(--border);
+  color: var(--cream); transition: var(--transition);
+}
+.variant-btn.active { border-color: var(--orange); background: rgba(30,64,175,0.06); }
+.variant-btn:hover { border-color: #cbd5e1; }
+.variant-name { font-weight: 700; font-size: 15px; }
+.variant-price { font-weight: 800; color: var(--orange); font-size: 16px; }
+
+.item-modal-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 20px; gap: 16px;
+  padding-top: 20px; border-top: 1px solid var(--border);
+}
+.item-modal-price {
+  font-size: 18px; color: var(--gray-light);
+}
+.item-modal-price strong {
+  font-family: var(--font-display); font-size: 28px; color: var(--orange);
+}
+
+@media (max-width: 480px) {
+  .item-modal-footer { flex-direction: column; }
+  .item-modal-footer .btn { width: 100%; justify-content: center; }
+}

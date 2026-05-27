@@ -1,0 +1,23 @@
+# Netlify build + SPA redirect.
+# REACT_APP_API_URL e REACT_APP_ADMIN_PATH devem ser setadas no
+# painel: Site settings → Build & deploy → Environment.
+
+[build]
+  command = "npm run build"
+  publish = "build"
+
+[build.environment]
+  NODE_VERSION = "20"
+  CI = "false"   # CRA trata warnings como erro por padrão; desliga isso
+
+# Fallback de roteamento para SPA (React Router)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Cache agressivo para os assets versionados do build
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
