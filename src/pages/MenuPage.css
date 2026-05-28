@@ -100,39 +100,49 @@
 .category-section { margin-bottom: 40px; }
 .cat-description { color: var(--gray); font-size: 14px; margin-bottom: 16px; }
 
-/* Category banner (imagem de fundo + nome em script) */
-.cat-banner {
+/* Banner único no topo do cardápio */
+.menu-banner {
   position: relative;
-  height: 200px;
+  height: 240px;
   border-radius: var(--radius);
   overflow: hidden;
-  margin-bottom: 18px;
+  margin-bottom: 28px;
   background: #e2e8f0;
   box-shadow: var(--shadow);
 }
-.cat-banner img {
+.menu-banner img {
   width: 100%; height: 100%;
   object-fit: cover; display: block;
 }
-.cat-banner-overlay {
+.menu-banner-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(90deg,
-    rgba(15,23,42,0.78) 0%,
-    rgba(15,23,42,0.45) 45%,
-    rgba(15,23,42,0.15) 100%);
+  background: linear-gradient(180deg,
+    rgba(15,23,42,0.25) 0%,
+    rgba(15,23,42,0.65) 100%);
 }
-.cat-banner-title {
-  position: absolute; left: 28px; bottom: 18px;
+.menu-banner-text {
+  position: absolute; left: 28px; bottom: 22px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.menu-banner-script {
   font-family: var(--font-script);
   font-weight: 700;
-  font-size: 46px; line-height: 1;
+  font-size: 52px; line-height: 1;
   color: #fff;
-  text-shadow: 0 2px 14px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 16px rgba(0,0,0,0.55);
+}
+.menu-banner-sub {
+  font-size: 14px; font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
 }
 
 @media (max-width: 600px) {
-  .cat-banner { height: 140px; margin-bottom: 14px; }
-  .cat-banner-title { font-size: 34px; left: 18px; bottom: 14px; }
+  .menu-banner { height: 170px; margin-bottom: 20px; }
+  .menu-banner-script { font-size: 38px; }
+  .menu-banner-sub { font-size: 12px; }
+  .menu-banner-text { left: 18px; bottom: 16px; }
 }
 
 /* Single-column item list */
