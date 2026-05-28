@@ -6,6 +6,49 @@ import './MenuPage.css';
 
 const MARMITA_CAT_ID = '__marmita__';
 
+// Banner por categoria — palavra-chave de imagem (loremflickr, sem API key).
+// Categorias não mapeadas caem no fallback 'food'.
+const BANNER_KEYWORDS = {
+  'pratos a la carte': 'steak',
+  'file bovino': 'steak',
+  'files de frango a': 'chicken',
+  'file de frango': 'chicken',
+  'grelhados a mineira bakaninha': 'barbecue',
+  'massas': 'pasta',
+  'pizzas': 'pizza',
+  'porcoes aperitivas': 'fries',
+  'porcoes': 'fries',
+  'guarnicoes': 'rice',
+  'saladas': 'salad',
+  'sucos': 'juice',
+  'cervejas 600 ml': 'beer',
+  'cervejas': 'beer',
+  'bebidas destiladas (dose)': 'whiskey',
+  'bebidas destiladas': 'whiskey',
+};
+
+const normalizeName = (s) =>
+  (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+
+function bannerUrl(name, keywordOverride) {
+  const key = normalizeName(name);
+  const kw = keywordOverride || BANNER_KEYWORDS[key] || 'food';
+  // lock estável (mesma imagem em todo reload) a partir do nome
+  let lock = 0;
+  for (let i = 0; i < key.length; i++) lock = (lock + key.charCodeAt(i)) % 997;
+  return `https://loremflickr.com/1200/320/${kw}?lock=${lock || 1}`;
+}
+
+function CategoryBanner({ title, keyword }) {
+  return (
+    <div className="cat-banner">
+      <img src={bannerUrl(title, keyword)} alt="" loading="lazy" />
+      <div className="cat-banner-overlay" />
+      <h2 className="cat-banner-title">{title}</h2>
+    </div>
+  );
+}
+
 export default function MenuPage({ scheduleStatus }) {
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
@@ -136,7 +179,7 @@ export default function MenuPage({ scheduleStatus }) {
                   ref={el => categoryRefs.current[MARMITA_CAT_ID] = el}
                   className="category-section"
                 >
-                  <div className="section-divider"><span>MARMITAS</span></div>
+                  <CategoryBanner title="Marmitas" keyword="lunchbox" />
                   <p className="cat-description">Monte a sua marmita escolhendo tamanho, acompanhamentos e proteína.</p>
                   <div className="items-list">
                     {marmitaSizes.map(size => (
@@ -160,7 +203,7 @@ export default function MenuPage({ scheduleStatus }) {
                     ref={el => categoryRefs.current[cat.id] = el}
                     className="category-section"
                   >
-                    <div className="section-divider"><span>{cat.name.toUpperCase()}</span></div>
+                    <CategoryBanner title={cat.name} />
                     {cat.description && <p className="cat-description">{cat.description}</p>}
                     <div className="items-list">
                       {catItems.map(item => (
