@@ -93,13 +93,6 @@ export default function CheckoutPage({ scheduleStatus }) {
         <h1 className="checkout-title">Finalizar pedido</h1>
         <p className="checkout-sub">Confira os itens e preencha os dados para enviar via WhatsApp.</p>
 
-        {blocked && (
-          <div className="closed-banner" style={{ marginBottom: 16 }}>
-            <span className="closed-dot" />
-            <span>{scheduleStatus.message} — Pedidos indisponíveis no momento</span>
-          </div>
-        )}
-
         <div className="checkout-grid">
           {/* ── Form ───────────────────────────────── */}
           <form className="checkout-form-card" onSubmit={handleSubmit}>

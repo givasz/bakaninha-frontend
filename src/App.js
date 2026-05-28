@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { ConfirmProvider } from './context/ConfirmContext';
 import Navbar from './components/Navbar';
+import ScheduleBar from './components/ScheduleBar';
 import WhatsAppFab from './components/WhatsAppFab';
 import MenuPage from './pages/MenuPage';
 import MarmitaPage from './pages/MarmitaPage';
@@ -22,6 +23,13 @@ function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return null;
   return user ? children : <Navigate to={ADMIN_LOGIN} replace />;
+}
+
+// Reseta o scroll para o topo a cada troca de rota.
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
 }
 
 function AppRoutes() {
@@ -43,6 +51,7 @@ function AppRoutes() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Admin routes – no navbar */}
         <Route path={ADMIN_LOGIN} element={<LoginPage />} />
@@ -53,7 +62,8 @@ function AppRoutes() {
         {/* Public routes – with navbar */}
         <Route path="/*" element={
           <>
-            <Navbar scheduleStatus={scheduleStatus} />
+            <Navbar />
+            <ScheduleBar scheduleStatus={scheduleStatus} />
             <Routes>
               <Route path="/"         element={<MenuPage scheduleStatus={scheduleStatus} />} />
               <Route path="/marmita"  element={<MarmitaPage scheduleStatus={scheduleStatus} />} />

@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext';
 import CartDrawer from './CartDrawer';
 import './Navbar.css';
 
-export default function Navbar({ scheduleStatus }) {
+export default function Navbar() {
   const { count } = useCart();
   const location = useLocation();
   const [cartOpen, setCartOpen] = useState(false);
@@ -17,15 +17,6 @@ export default function Navbar({ scheduleStatus }) {
         <Link to="/" className="navbar-brand">
           <img src="/logo-branca.jpg" alt="Bakaninha" className="navbar-logo" />
         </Link>
-
-        <div className="navbar-center">
-          {scheduleStatus && (
-            <span className={`pill ${scheduleStatus.open ? 'pill-open' : 'pill-closed'}`}>
-              <span className="status-dot" />
-              {scheduleStatus.message}
-            </span>
-          )}
-        </div>
 
         <div className="navbar-actions">
           <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Cardápio</Link>

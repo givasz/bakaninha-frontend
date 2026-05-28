@@ -116,13 +116,6 @@ export default function MarmitaPage({ scheduleStatus }) {
         <div className="hero-pattern" />
       </div>
 
-      {scheduleStatus && !scheduleStatus.open && (
-        <div className="closed-banner">
-          <span className="closed-dot" />
-          <span>{scheduleStatus.message} — Pedidos indisponíveis</span>
-        </div>
-      )}
-
       <div className="marmita-layout">
         {/* Left: Size selector */}
         <div className="marmita-sizes">

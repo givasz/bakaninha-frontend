@@ -17,21 +17,6 @@
   object-fit: contain;
 }
 
-.navbar-center { flex: 1; display: flex; justify-content: center; }
-
-.status-dot {
-  width: 9px; height: 9px; border-radius: 50%;
-  background: currentColor; display: inline-block;
-  flex-shrink: 0;
-}
-.pill-open .status-dot {
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-@keyframes pulse-dot {
-  0% { box-shadow: 0 0 0 0 rgba(22,163,74,0.45); }
-  70%, 100% { box-shadow: 0 0 0 6px rgba(22,163,74,0); }
-}
-
 .navbar-actions {
   display: flex; align-items: center; gap: 4px;
 }
@@ -66,18 +51,8 @@
 }
 
 @media (max-width: 768px) {
-  .navbar { padding: 0 14px; gap: 8px; }
-  .navbar-center { flex: 0 1 auto; min-width: 0; }
-  .navbar-center .pill {
-    padding: 7px 14px; font-size: 13px; gap: 7px;
-    white-space: nowrap;
-  }
-  .navbar-center .status-dot { width: 8px; height: 8px; }
+  .navbar { padding: 0 16px; }
   .nav-link { display: none; }
   .nav-link.active, .btn-cart { display: flex; }
   .navbar-logo { height: 36px; }
-}
-
-@media (max-width: 380px) {
-  .navbar-center .pill { padding: 6px 11px; font-size: 12px; }
 }

@@ -1,0 +1,40 @@
+.schedule-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; flex-wrap: wrap;
+  width: 100%; padding: 9px 16px;
+  font-size: 14px; font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+.schedule-bar.open   { background: rgba(22,163,74,0.08);  border-bottom-color: rgba(22,163,74,0.25); }
+.schedule-bar.closed { background: rgba(220,38,38,0.08);  border-bottom-color: rgba(220,38,38,0.25); }
+
+.schedule-bar-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 12px; border-radius: 999px;
+  font-size: 12px; font-weight: 800; letter-spacing: 0.6px;
+  color: #fff; flex-shrink: 0;
+}
+.schedule-bar-pill.open   { background: var(--success); }
+.schedule-bar-pill.closed { background: var(--danger); }
+
+.schedule-bar-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #fff; display: inline-block;
+}
+.schedule-bar.open .schedule-bar-dot { animation: schedule-pulse 2s ease-in-out infinite; }
+@keyframes schedule-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.6); }
+  70%, 100% { box-shadow: 0 0 0 5px rgba(255,255,255,0); }
+}
+
+.schedule-bar-msg {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--gray-light);
+}
+.schedule-bar.open   .schedule-bar-msg svg { color: var(--success); }
+.schedule-bar.closed .schedule-bar-msg svg { color: var(--danger); }
+
+@media (max-width: 600px) {
+  .schedule-bar { font-size: 13px; padding: 8px 12px; gap: 8px; }
+  .schedule-bar-pill { font-size: 11px; padding: 3px 10px; }
+}
