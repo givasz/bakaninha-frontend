@@ -138,11 +138,14 @@
   text-shadow: 0 1px 8px rgba(0,0,0,0.5);
 }
 
+.category-banner { height: 190px; margin-bottom: 20px; }
+
 @media (max-width: 600px) {
   .menu-banner { height: 170px; margin-bottom: 20px; }
   .menu-banner-script { font-size: 38px; }
   .menu-banner-sub { font-size: 12px; }
   .menu-banner-text { left: 18px; bottom: 16px; }
+  .category-banner { height: 140px; }
 }
 
 /* Single-column item list */

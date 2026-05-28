@@ -84,14 +84,6 @@ export default function MenuPage({ scheduleStatus }) {
         <div className="hero-pattern" />
       </div>
 
-      {/* Closed banner */}
-      {scheduleStatus && !scheduleStatus.open && (
-        <div className="closed-banner">
-          <span className="closed-dot" />
-          <span>{scheduleStatus.message} — Pedidos indisponíveis no momento</span>
-        </div>
-      )}
-
       {/* Search */}
       <div className="menu-search-wrap">
         <div className="menu-search">
@@ -180,8 +172,25 @@ export default function MenuPage({ scheduleStatus }) {
                     ref={el => categoryRefs.current[cat.id] = el}
                     className="category-section"
                   >
-                    <div className="section-divider"><span>{cat.name.toUpperCase()}</span></div>
-                    {cat.description && <p className="cat-description">{cat.description}</p>}
+                    {cat.imageUrl ? (
+                      <div className="menu-banner category-banner">
+                        <img
+                          src={cat.imageUrl.startsWith('http') ? cat.imageUrl : `${API_URL}${cat.imageUrl}`}
+                          alt={cat.name}
+                          loading="lazy"
+                        />
+                        <div className="menu-banner-overlay" />
+                        <div className="menu-banner-text">
+                          <span className="menu-banner-script">{cat.name}</span>
+                          {cat.description && <span className="menu-banner-sub">{cat.description}</span>}
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="section-divider"><span>{cat.name.toUpperCase()}</span></div>
+                        {cat.description && <p className="cat-description">{cat.description}</p>}
+                      </>
+                    )}
                     <div className="items-list">
                       {catItems.map(item => (
                         <ItemCard key={item.id} item={item} onClick={() => setSelectedItem(item)} disabled={scheduleStatus && !scheduleStatus.open} />
@@ -258,7 +267,10 @@ function MarmitaSizeCard({ size, onClick, disabled }) {
         </div>
       </div>
       <div className="item-card-image marmita-card-image">
-        <div className="img-placeholder-empty" />
+        {size.imageUrl
+          ? <img src={size.imageUrl.startsWith('http') ? size.imageUrl : `${API_URL}${size.imageUrl}`} alt={`Marmita ${size.name || ''}`.trim()} loading="lazy" />
+          : <div className="img-placeholder-empty" />
+        }
       </div>
     </div>
   );

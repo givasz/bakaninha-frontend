@@ -519,10 +519,24 @@ function GroupsTab({ groups, sizes, reload, showToast }) {
 function SizesTab({ sizes, reload, showToast }) {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const confirm = useConfirm();
 
-  const openNew  = () => { setEditing({ _new: true, name:'', price:'', order:0, active:true }); setShowForm(true); };
-  const openEdit = (s) => { setEditing({ _new: false, id:s.id, name:s.name, price:s.price, order:s.order, active:s.active }); setShowForm(true); };
+  const imgSrc = (url) => url ? (url.startsWith('http') ? url : `${API_URL}${url}`) : null;
+
+  const openNew  = () => { setEditing({ _new: true, name:'', price:'', imageUrl:'', order:0, active:true }); setShowForm(true); };
+  const openEdit = (s) => { setEditing({ _new: false, id:s.id, name:s.name, price:s.price, imageUrl:s.imageUrl||'', order:s.order, active:s.active }); setShowForm(true); };
+
+  const handleImage = async (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    const fd = new FormData(); fd.append('file', file);
+    setUploading(true);
+    try {
+      const { data } = await api.post('/upload/image', fd);
+      setEditing(ed => ({ ...ed, imageUrl: data.url }));
+    } catch { showToast('Erro ao enviar imagem', 'error'); }
+    setUploading(false);
+  };
 
   const handleToggle = async (s) => {
     await api.put(`/marmita/sizes/${s.id}`, { active: !s.active });
@@ -543,7 +557,7 @@ function SizesTab({ sizes, reload, showToast }) {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const payload = { name: (editing.name || '').trim(), price: +editing.price, order: +editing.order, active: editing.active };
+    const payload = { name: (editing.name || '').trim(), price: +editing.price, imageUrl: editing.imageUrl || null, order: +editing.order, active: editing.active };
     try {
       if (editing._new) await api.post('/marmita/sizes', payload);
       else               await api.put(`/marmita/sizes/${editing.id}`, payload);
@@ -562,6 +576,11 @@ function SizesTab({ sizes, reload, showToast }) {
       <div className="admin-list">
         {sizes.map(s => (
           <div key={s.id} className="admin-list-item">
+            {s.imageUrl && (
+              <div className="admin-list-item-img">
+                <img src={imgSrc(s.imageUrl)} alt={s.name} />
+              </div>
+            )}
             <div className="admin-list-item-info">
               <div className="admin-list-item-name">{`Marmita ${s.name || ''}`.trim() || 'Marmita (única)'}</div>
               <div className="admin-list-item-sub">R$ {Number(s.price).toFixed(2)} · ordem {s.order}</div>
@@ -606,6 +625,26 @@ function SizesTab({ sizes, reload, showToast }) {
                   <input type="number" className="form-input" value={editing.order}
                     onChange={e=>setEditing({...editing, order:e.target.value})}/>
                 </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Foto da marmita</label>
+                {editing.imageUrl ? (
+                  <div className="img-upload-preview">
+                    <img src={imgSrc(editing.imageUrl)} alt="preview"/>
+                    <button type="button" className="btn btn-ghost" style={{padding:'4px 10px',fontSize:12}}
+                      onClick={()=>setEditing({...editing, imageUrl:''})}>Remover</button>
+                  </div>
+                ) : (
+                  <div className="img-upload-area">
+                    <input type="file" accept="image/*" onChange={handleImage}/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ color: 'var(--gray)', marginBottom: 6 }}>
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <div style={{fontSize:13,color:'var(--gray)'}}>{uploading?'Enviando...':'Clique para enviar'}</div>
+                  </div>
+                )}
               </div>
               <div style={{display:'flex',alignItems:'center',gap:10}}>
                 <label className="switch">
