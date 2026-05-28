@@ -18,6 +18,9 @@ export default function AdminItems() {
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter]       = useState('');
   const [collapsed, setCollapsed] = useState({}); // categoryId -> bool
+  const [dragId, setDragId]       = useState(null);
+  const [dragCat, setDragCat]     = useState(null);
+  const [dragOverId, setDragOverId] = useState(null);
   const fileRef = useRef();
   const { showToast } = useToast();
   const confirm = useConfirm();
@@ -100,6 +103,34 @@ export default function AdminItems() {
     load();
   };
 
+  const sortItems = (a, b) => (a.order - b.order) || a.name.localeCompare(b.name);
+  const groupKeyOf = (it) => (it.categoryId || it.category?.id) || 'none';
+
+  const handleDragStart = (item) => {
+    setDragId(item.id);
+    setDragCat(groupKeyOf(item));
+  };
+  const handleDragEnd = () => { setDragId(null); setDragCat(null); setDragOverId(null); };
+
+  // Solta o item arrastado na posição do alvo, dentro da MESMA categoria.
+  const handleDrop = (target) => {
+    if (dragId == null || dragId === target.id || groupKeyOf(target) !== dragCat) {
+      handleDragEnd();
+      return;
+    }
+    const catIds = items.filter(it => groupKeyOf(it) === dragCat).map(it => it.id);
+    const reordered = catIds.filter(id => id !== dragId);
+    reordered.splice(reordered.indexOf(target.id), 0, dragId);
+
+    const orderMap = new Map(reordered.map((id, idx) => [id, idx]));
+    setItems(prev =>
+      prev.map(it => orderMap.has(it.id) ? { ...it, order: orderMap.get(it.id) } : it).sort(sortItems)
+    );
+    handleDragEnd();
+    api.put('/items/reorder', { ids: reordered })
+      .catch(() => { showToast('Erro ao salvar ordem', 'error'); load(); });
+  };
+
   if (loading) return <div style={{padding:40,display:'flex',justifyContent:'center'}}><div className="spinner"/></div>;
 
   const filterText = filter.trim().toLowerCase();
@@ -128,8 +159,31 @@ export default function AdminItems() {
     let variants = [];
     try { variants = JSON.parse(item.variantsJson || '[]'); } catch {}
 
+    const draggable = !filterText;
     return (
-      <div key={item.id} className="admin-list-item">
+      <div
+        key={item.id}
+        className={`admin-list-item${dragId === item.id ? ' dragging' : ''}${dragOverId === item.id ? ' drag-over' : ''}`}
+        draggable={draggable}
+        onDragStart={() => handleDragStart(item)}
+        onDragEnd={handleDragEnd}
+        onDragOver={e => {
+          if (dragId == null || groupKeyOf(item) !== dragCat) return;
+          e.preventDefault();
+          if (dragOverId !== item.id) setDragOverId(item.id);
+        }}
+        onDragLeave={() => { if (dragOverId === item.id) setDragOverId(null); }}
+        onDrop={e => { e.preventDefault(); handleDrop(item); }}
+      >
+        {draggable && (
+          <span className="drag-handle" title="Arraste para reordenar" aria-hidden>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/>
+              <circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/>
+              <circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/>
+            </svg>
+          </span>
+        )}
         <div className="admin-list-item-img">
           {imgSrc ? <img src={imgSrc} alt={item.name}/> : <div className="img-placeholder" style={{height:'100%'}}/>}
         </div>
@@ -161,7 +215,10 @@ export default function AdminItems() {
     <div className="admin-section">
       <div className="admin-toolbar">
         <div style={{display:'flex',alignItems:'center',gap:12,flex:1,flexWrap:'wrap'}}>
-          <p style={{color:'var(--gray)',fontSize:14,margin:0}}>{items.length} item(s) em {sortedCats.length} categoria(s)</p>
+          <p style={{color:'var(--gray)',fontSize:14,margin:0}}>
+            {items.length} item(s) em {sortedCats.length} categoria(s)
+            {!filterText && <span style={{display:'block',fontSize:12,marginTop:2}}>Arraste os itens (⋮⋮) para reordenar dentro da categoria.</span>}
+          </p>
           <input
             className="form-input"
             placeholder="Filtrar pelo nome..."
