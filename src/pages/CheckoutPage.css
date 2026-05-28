@@ -121,9 +121,15 @@
   font-weight: 800; color: var(--accent); font-size: 14px;
 }
 
+.checkout-subtotal {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4px 16px; font-size: 14px; color: var(--gray-light);
+}
+.checkout-subtotal:first-of-type { margin-top: 4px; }
+
 .checkout-total {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 14px 16px; background: var(--bg);
+  padding: 14px 16px; margin-top: 8px; background: var(--bg);
   border: 1px solid var(--border); border-radius: var(--radius-sm);
   font-size: 14px; color: var(--gray-light);
 }

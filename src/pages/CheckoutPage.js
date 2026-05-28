@@ -22,11 +22,21 @@ export default function CheckoutPage({ scheduleStatus }) {
   const [payment, setPayment]       = useState('');
   const [observation, setObservation] = useState('');
   const [changeFor, setChangeFor]   = useState('');
+  const [deliveryFee, setDeliveryFee] = useState(0);
   const [loading, setLoading]       = useState(false);
 
   useEffect(() => {
     if (items.length === 0) navigate('/', { replace: true });
   }, [items.length, navigate]);
+
+  useEffect(() => {
+    api.get('/settings')
+      .then(r => setDeliveryFee(Number(r.data.deliveryFee) || 0))
+      .catch(() => {});
+  }, []);
+
+  const appliedFee = orderType === 'delivery' ? deliveryFee : 0;
+  const grandTotal = total + appliedFee;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -255,9 +265,21 @@ export default function CheckoutPage({ scheduleStatus }) {
               ))}
             </div>
 
+            {appliedFee > 0 && (
+              <>
+                <div className="checkout-subtotal">
+                  <span>Subtotal</span>
+                  <span>R$ {total.toFixed(2)}</span>
+                </div>
+                <div className="checkout-subtotal">
+                  <span>Taxa de entrega</span>
+                  <span>R$ {appliedFee.toFixed(2)}</span>
+                </div>
+              </>
+            )}
             <div className="checkout-total">
               <span>Total</span>
-              <strong>R$ {total.toFixed(2)}</strong>
+              <strong>R$ {grandTotal.toFixed(2)}</strong>
             </div>
           </aside>
         </div>

@@ -5,6 +5,7 @@ import AdminCategories from '../components/admin/AdminCategories';
 import AdminItems from '../components/admin/AdminItems';
 import AdminMarmita from '../components/admin/AdminMarmita';
 import AdminSchedule from '../components/admin/AdminSchedule';
+import AdminDelivery from '../components/admin/AdminDelivery';
 import './AdminPage.css';
 
 const TABS = [
@@ -12,6 +13,7 @@ const TABS = [
   { id: 'items',      label: 'Itens' },
   { id: 'marmita',    label: 'Marmitas' },
   { id: 'schedule',   label: 'Horários' },
+  { id: 'delivery',   label: 'Taxa de Entrega' },
 ];
 
 export default function AdminPage() {
@@ -64,6 +66,7 @@ export default function AdminPage() {
           {tab === 'items'      && <AdminItems />}
           {tab === 'marmita'    && <AdminMarmita />}
           {tab === 'schedule'   && <AdminSchedule />}
+          {tab === 'delivery'   && <AdminDelivery />}
         </div>
       </main>
     </div>
