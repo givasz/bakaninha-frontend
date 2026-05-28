@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '../utils/api';
+import api, { isTokenValid, clearSession } from '../utils/api';
 
 const AuthContext = createContext(null);
 
@@ -10,7 +10,11 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem('baka_token');
     const username = localStorage.getItem('baka_user');
-    if (token && username) setUser({ username });
+    if (token && username && isTokenValid(token)) {
+      setUser({ username });
+    } else {
+      clearSession();
+    }
     setLoading(false);
   }, []);
 
