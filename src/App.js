@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { ConfirmProvider } from './context/ConfirmContext';
 import Navbar from './components/Navbar';
+import WhatsAppFab from './components/WhatsAppFab';
 import MenuPage from './pages/MenuPage';
 import MarmitaPage from './pages/MarmitaPage';
 import CheckoutPage from './pages/CheckoutPage';
@@ -62,6 +63,7 @@ function AppRoutes() {
           </>
         } />
       </Routes>
+      <WhatsAppFab />
     </BrowserRouter>
   );
 }

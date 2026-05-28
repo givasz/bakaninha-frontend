@@ -1,0 +1,46 @@
+.wa-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 900;            /* abaixo do CartDrawer (1000), acima do conteúdo */
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25D366;      /* verde oficial do WhatsApp */
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.wa-fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 26px rgba(37, 211, 102, 0.55);
+}
+.wa-fab:active { transform: scale(0.96); }
+
+/* pulse sutil pra chamar atenção sem irritar */
+.wa-fab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #25D366;
+  opacity: 0;
+  animation: wa-pulse 2.8s ease-out infinite;
+}
+@keyframes wa-pulse {
+  0%   { transform: scale(1);   opacity: 0.5; }
+  70%  { transform: scale(1.5); opacity: 0;   }
+  100% { transform: scale(1.5); opacity: 0;   }
+}
+
+@media (max-width: 600px) {
+  .wa-fab {
+    width: 52px;
+    height: 52px;
+    right: 16px;
+    bottom: 16px;
+  }
+}
