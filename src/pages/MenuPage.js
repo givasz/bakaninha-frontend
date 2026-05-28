@@ -9,8 +9,7 @@ const MARMITA_CAT_ID = '__marmita__';
 // Banner único no topo do cardápio. Imagem de qualidade (Unsplash, estável).
 // Pode trocar pela env REACT_APP_MENU_HERO_URL no Netlify.
 const MENU_HERO_URL =
-  process.env.REACT_APP_MENU_HERO_URL ||
-  'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80';
+  process.env.REACT_APP_MENU_HERO_URL || '/menu-hero.avif';
 
 function MenuBanner() {
   return (
