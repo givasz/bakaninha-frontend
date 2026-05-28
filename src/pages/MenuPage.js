@@ -248,7 +248,7 @@ function MarmitaSizeCard({ size, onClick, disabled }) {
   return (
     <div className={`item-card marmita-size-card ${disabled ? 'disabled' : ''}`} onClick={disabled ? null : onClick}>
       <div className="item-card-body">
-        <h3 className="item-card-name">Marmita {size.name}</h3>
+        <h3 className="item-card-name">{`Marmita ${size.name || ''}`.trim()}</h3>
         <p className="item-card-desc">
           Escolha arroz, feijão, acompanhamentos e a proteína do seu jeito.
         </p>

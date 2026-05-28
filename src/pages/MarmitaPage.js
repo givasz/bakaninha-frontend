@@ -4,6 +4,9 @@ import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import './MarmitaPage.css';
 
+const sizeLabel = (name) => (name || '').trim() || 'Único';
+const marmitaName = (name) => `Marmita ${(name || '').trim()}`.trim();
+
 export default function MarmitaPage({ scheduleStatus }) {
   const [sizes, setSizes] = useState([]);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -81,11 +84,11 @@ export default function MarmitaPage({ scheduleStatus }) {
     const cartKey = `marmita-${selectedSize.id}-${Date.now()}`;
     addItem({
       cartKey,
-      name: `Marmita ${selectedSize.name}`,
+      name: marmitaName(selectedSize.name),
       price: totalPrice,
       selections,
     });
-    showToast(`Marmita ${selectedSize.name} adicionada!`, 'success');
+    showToast(`${marmitaName(selectedSize.name)} adicionada!`, 'success');
     setChoices({});
   };
 
@@ -130,7 +133,7 @@ export default function MarmitaPage({ scheduleStatus }) {
               className={`size-card ${selectedSize?.id === size.id ? 'active' : ''}`}
               onClick={() => handleSelectSize(size)}
             >
-              <div className="size-name">{size.name}</div>
+              <div className="size-name">{sizeLabel(size.name)}</div>
               <div className="size-price">R$ {Number(size.price).toFixed(2)}</div>
             </button>
           ))}
@@ -141,7 +144,7 @@ export default function MarmitaPage({ scheduleStatus }) {
           {selectedSize && (
             <div className="builder-header">
               <div className="builder-header-info">
-                <h2 className="builder-title">Marmita {selectedSize.name}</h2>
+                <h2 className="builder-title">{marmitaName(selectedSize.name)}</h2>
                 <p className="builder-price">
                   R$ {Number(selectedSize.price).toFixed(2)}
                   {totalExtra > 0 && <span className="extra-price"> + R$ {totalExtra.toFixed(2)} extras</span>}

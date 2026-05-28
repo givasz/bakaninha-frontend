@@ -453,7 +453,7 @@ function GroupsTab({ groups, sizes, reload, showToast }) {
               return (
                 <div key={s.id} className={`size-config-card ${linked ? 'linked' : ''}`}>
                   <div className="size-config-head">
-                    <span className="size-config-name">Tamanho {s.name}</span>
+                    <span className="size-config-name">{`Tamanho ${s.name || ''}`.trim() || 'Tamanho único'}</span>
                     <label className="switch">
                       <input type="checkbox" checked={linked} onChange={() => handleSizeToggle(g, s, sg)} />
                       <span className="slider" />
@@ -543,7 +543,7 @@ function SizesTab({ sizes, reload, showToast }) {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const payload = { name: editing.name, price: +editing.price, order: +editing.order, active: editing.active };
+    const payload = { name: (editing.name || '').trim(), price: +editing.price, order: +editing.order, active: editing.active };
     try {
       if (editing._new) await api.post('/marmita/sizes', payload);
       else               await api.put(`/marmita/sizes/${editing.id}`, payload);
@@ -563,7 +563,7 @@ function SizesTab({ sizes, reload, showToast }) {
         {sizes.map(s => (
           <div key={s.id} className="admin-list-item">
             <div className="admin-list-item-info">
-              <div className="admin-list-item-name">Marmita {s.name}</div>
+              <div className="admin-list-item-name">{`Marmita ${s.name || ''}`.trim() || 'Marmita (única)'}</div>
               <div className="admin-list-item-sub">R$ {Number(s.price).toFixed(2)} · ordem {s.order}</div>
             </div>
             <div className="admin-list-item-actions">
@@ -590,10 +590,10 @@ function SizesTab({ sizes, reload, showToast }) {
             </div>
             <form onSubmit={handleSave} className="admin-form">
               <div className="form-group">
-                <label className="form-label">Nome *</label>
-                <input className="form-input" required autoFocus value={editing.name}
+                <label className="form-label">Nome</label>
+                <input className="form-input" autoFocus value={editing.name}
                   onChange={e=>setEditing({...editing, name:e.target.value})}
-                  placeholder="Ex: P, M, G, GG" />
+                  placeholder="Ex: P, M, G, GG — deixe vazio se for único" />
               </div>
               <div className="grid-2">
                 <div className="form-group">
