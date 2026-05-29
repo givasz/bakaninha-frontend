@@ -18,14 +18,33 @@ const TABS = [
 
 export default function AdminPage() {
   const [tab, setTab] = useState('categories');
+  const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => { logout(); navigate('/'); };
 
+  const selectTab = (id) => { setTab(id); setMenuOpen(false); };
+
   return (
     <div className="admin-page">
-      <div className="admin-sidebar">
+      {/* Top bar visível só no mobile — abre/fecha a sidebar */}
+      <header className="admin-mobile-bar">
+        <button
+          className="admin-menu-btn"
+          aria-label="Abrir menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(o => !o)}
+        >
+          <span /><span /><span />
+        </button>
+        <span className="admin-mobile-title">{TABS.find(t => t.id === tab)?.label}</span>
+      </header>
+
+      {/* Fundo escuro ao abrir o menu no mobile */}
+      {menuOpen && <div className="admin-backdrop" onClick={() => setMenuOpen(false)} />}
+
+      <div className={`admin-sidebar ${menuOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-top">
           <div className="admin-logo">
             <img src="/logo-branca.jpg" alt="Bakaninha" className="admin-logo-img" />
@@ -36,7 +55,7 @@ export default function AdminPage() {
               <button
                 key={t.id}
                 className={`admin-nav-btn ${tab === t.id ? 'active' : ''}`}
-                onClick={() => setTab(t.id)}
+                onClick={() => selectTab(t.id)}
               >
                 {t.label}
               </button>
