@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { useToast } from '../context/ToastContext';
 import { API_URL } from '../utils/api';
 import './ItemModal.css';
 
 export default function ItemModal({ item, onClose }) {
-  const { addItem } = useCart();
-  const { showToast } = useToast();
+  const { addItem, openCart } = useCart();
 
   const variants = item.variants || (item.variantsJson ? JSON.parse(item.variantsJson) : []);
   const hasVariants = variants.length > 0;
@@ -24,8 +22,8 @@ export default function ItemModal({ item, onClose }) {
       price,
       imageUrl: item.imageUrl,
     });
-    showToast(`${item.name} adicionado!`, 'success');
     onClose();
+    openCart();
   };
 
   const imgSrc = item.imageUrl

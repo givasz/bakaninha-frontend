@@ -15,7 +15,7 @@ export default function MarmitaPage({ scheduleStatus }) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingDetail, setLoadingDetail] = useState(false);
-  const { addItem } = useCart();
+  const { addItem, openCart } = useCart();
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -88,8 +88,8 @@ export default function MarmitaPage({ scheduleStatus }) {
       price: totalPrice,
       selections,
     });
-    showToast(`${marmitaName(selectedSize.name)} adicionada!`, 'success');
     setChoices({});
+    openCart();
   };
 
   if (loading) return (
