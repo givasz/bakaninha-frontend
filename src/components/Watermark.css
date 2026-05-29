@@ -1,0 +1,121 @@
+.watermark {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #C6F432;
+  padding: 18px 32px;
+  text-decoration: none;
+  transition: filter 0.2s;
+}
+
+.watermark:hover {
+  filter: brightness(0.96);
+}
+
+/* Lado esquerdo */
+.watermark__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.watermark__logo {
+  color: #0A0A0A;
+  flex-shrink: 0;
+}
+
+.watermark__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.watermark__dev {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(10,10,10,0.4);
+  line-height: 1;
+}
+
+.watermark__brand {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  color: #0A0A0A;
+  line-height: 1.1;
+}
+
+.watermark__brand em {
+  font-style: italic;
+  color: rgba(10,10,10,0.55);
+}
+
+/* Lado direito */
+.watermark__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.watermark__cta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(10,10,10,0.4);
+}
+
+.watermark__url {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: rgba(10,10,10,0.6);
+  font-weight: 500;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .watermark {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 24px;
+    text-align: center;
+  }
+
+  .watermark__left {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .watermark__text {
+    align-items: center;
+  }
+
+  .watermark__right {
+    align-items: center;
+  }
+
+  .watermark__brand {
+    font-size: 20px;
+  }
+
+  .watermark__cta,
+  .watermark__url {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 360px) {
+  .watermark { padding: 14px 16px; }
+}
