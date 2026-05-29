@@ -75,6 +75,7 @@ export default function CheckoutPage({ scheduleStatus }) {
           selections: i.selections,
         })),
       });
+      if (!data || !data.url) throw new Error('Resposta sem link do WhatsApp');
       if (waWindow) waWindow.location.href = data.url; // usa a aba já aberta
       else          window.location.href = data.url;   // popup bloqueado: mesma aba
       clear();
@@ -82,7 +83,7 @@ export default function CheckoutPage({ scheduleStatus }) {
       navigate('/', { replace: true });
     } catch {
       if (waWindow) waWindow.close();
-      showToast('Erro ao enviar pedido', 'error');
+      showToast('Erro ao enviar pedido. Tente novamente ou chame no WhatsApp.', 'error');
     }
     setLoading(false);
   };
