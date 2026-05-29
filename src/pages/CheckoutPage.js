@@ -48,6 +48,10 @@ export default function CheckoutPage({ scheduleStatus }) {
     if (orderType === 'local' && !table.trim())           { showToast('Informe a mesa', 'error'); return; }
 
     setLoading(true);
+    // iOS/Safari bloqueia window.open chamado DEPOIS de um await (perde o gesto
+    // do toque). Por isso abrimos a aba já aqui, de forma síncrona, e só depois
+    // trocamos o endereço dela para o link do WhatsApp.
+    const waWindow = window.open('', '_blank');
     try {
       const { data } = await api.post('/orders/whatsapp', {
         type: orderType,
@@ -71,11 +75,13 @@ export default function CheckoutPage({ scheduleStatus }) {
           selections: i.selections,
         })),
       });
-      window.open(data.url, '_blank');
+      if (waWindow) waWindow.location.href = data.url; // usa a aba já aberta
+      else          window.location.href = data.url;   // popup bloqueado: mesma aba
       clear();
       showToast('Pedido enviado via WhatsApp!', 'success');
       navigate('/', { replace: true });
     } catch {
+      if (waWindow) waWindow.close();
       showToast('Erro ao enviar pedido', 'error');
     }
     setLoading(false);
