@@ -247,7 +247,6 @@ function ItemCard({ item, onClick, disabled }) {
           ? <img src={imgSrc} alt={item.name} loading="lazy" />
           : <div className="img-placeholder-empty" />
         }
-        {hasVariants && <span className="variant-badge">várias opções</span>}
       </div>
     </div>
   );
