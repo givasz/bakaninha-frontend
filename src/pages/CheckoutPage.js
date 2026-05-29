@@ -47,11 +47,13 @@ export default function CheckoutPage({ scheduleStatus }) {
     if (orderType === 'delivery' && !neighborhood.trim()) { showToast('Informe o bairro', 'error'); return; }
     if (orderType === 'local' && !table.trim())           { showToast('Informe a mesa', 'error'); return; }
 
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+
     setLoading(true);
-    // iOS/Safari bloqueia window.open chamado DEPOIS de um await (perde o gesto
-    // do toque). Por isso abrimos a aba já aqui, de forma síncrona, e só depois
-    // trocamos o endereço dela para o link do WhatsApp.
-    const waWindow = window.open('', '_blank');
+    // No desktop abrimos a aba já no clique, de forma síncrona — Safari bloqueia
+    // window.open chamado depois de um await. No celular não precisamos de aba
+    // nova: navegamos a própria página para o link do WhatsApp (não é bloqueado).
+    const waWindow = isMobile ? null : window.open('', '_blank');
     try {
       const { data } = await api.post('/orders/whatsapp', {
         type: orderType,
@@ -76,8 +78,21 @@ export default function CheckoutPage({ scheduleStatus }) {
         })),
       });
       if (!data || !data.url) throw new Error('Resposta sem link do WhatsApp');
-      if (waWindow) waWindow.location.href = data.url; // usa a aba já aberta
-      else          window.location.href = data.url;   // popup bloqueado: mesma aba
+
+      if (isMobile && data.appUrl) {
+        // Abre o app direto (pula a página api.whatsapp.com, que em navegadores
+        // antigos falha e só oferece "baixar"). Se o app não abrir em ~1,5s,
+        // cai automaticamente para o site do WhatsApp.
+        const timer = setTimeout(() => { window.location.href = data.url; }, 1500);
+        const cancelFallback = () => clearTimeout(timer);
+        window.addEventListener('pagehide', cancelFallback, { once: true });
+        document.addEventListener('visibilitychange', cancelFallback, { once: true });
+        window.location.href = data.appUrl;
+      } else if (waWindow) {
+        waWindow.location.href = data.url; // usa a aba já aberta (desktop)
+      } else {
+        window.location.href = data.url;   // popup bloqueado: mesma aba
+      }
       clear();
       showToast('Pedido enviado via WhatsApp!', 'success');
       navigate('/', { replace: true });
