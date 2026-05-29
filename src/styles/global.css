@@ -3,6 +3,11 @@
    Palette: Branco, Cinzas, Azul como destaque
    =========================== */
 
+/* Sticky footer: prende a marca d'água no fim da viewport mesmo com
+   pouco conteúdo (evita o "flash" dela subindo durante o carregamento) */
+.public-shell { display: flex; flex-direction: column; min-height: 100vh; }
+.public-main { flex: 1 0 auto; }
+
 :root {
   /* legacy "dark" tokens are now mapped to neutrals so existing rules keep working */
   --black: #0f172a;        /* texto principal (slate-900) */

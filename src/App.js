@@ -62,17 +62,19 @@ function AppRoutes() {
 
         {/* Public routes – with navbar */}
         <Route path="/*" element={
-          <>
+          <div className="public-shell">
             <Navbar />
             <ScheduleBar scheduleStatus={scheduleStatus} />
-            <Routes>
-              <Route path="/"         element={<MenuPage scheduleStatus={scheduleStatus} />} />
-              <Route path="/marmita"  element={<MarmitaPage scheduleStatus={scheduleStatus} />} />
-              <Route path="/checkout" element={<CheckoutPage scheduleStatus={scheduleStatus} />} />
-              <Route path="*"         element={<Navigate to="/" replace />} />
-            </Routes>
+            <main className="public-main">
+              <Routes>
+                <Route path="/"         element={<MenuPage scheduleStatus={scheduleStatus} />} />
+                <Route path="/marmita"  element={<MarmitaPage scheduleStatus={scheduleStatus} />} />
+                <Route path="/checkout" element={<CheckoutPage scheduleStatus={scheduleStatus} />} />
+                <Route path="*"         element={<Navigate to="/" replace />} />
+              </Routes>
+            </main>
             <Watermark />
-          </>
+          </div>
         } />
       </Routes>
       <WhatsAppFab />
