@@ -32,7 +32,6 @@ export default function MarmitaPage({ scheduleStatus }) {
         }
       })
       .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSelectSize = async (size) => {
