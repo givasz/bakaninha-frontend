@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import api, { API_URL } from '../utils/api';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
@@ -17,11 +18,21 @@ export default function MarmitaPage({ scheduleStatus }) {
   const [loadingDetail, setLoadingDetail] = useState(false);
   const { addItem, openCart } = useCart();
   const { showToast } = useToast();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     api.get('/marmita/sizes/active')
-      .then(r => { setSizes(r.data); if (r.data.length) handleSelectSize(r.data[0]); })
+      .then(r => {
+        setSizes(r.data);
+        if (r.data.length) {
+          // Abre já na marmita clicada no cardápio (?size=ID); senão, a primeira.
+          const wanted = searchParams.get('size');
+          const initial = (wanted && r.data.find(s => String(s.id) === wanted)) || r.data[0];
+          handleSelectSize(initial);
+        }
+      })
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSelectSize = async (size) => {

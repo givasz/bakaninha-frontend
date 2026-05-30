@@ -155,7 +155,7 @@ export default function MenuPage({ scheduleStatus }) {
                       <MarmitaSizeCard
                         key={size.id}
                         size={size}
-                        onClick={() => navigate('/marmita')}
+                        onClick={() => navigate(`/marmita?size=${size.id}`)}
                         disabled={scheduleStatus && !scheduleStatus.open}
                       />
                     ))}
