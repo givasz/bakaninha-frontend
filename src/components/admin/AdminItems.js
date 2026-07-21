@@ -27,13 +27,14 @@ export default function AdminItems() {
 
   const toggleCollapsed = (key) => setCollapsed(c => ({ ...c, [key]: !c[key] }));
 
-  const load = () => {
-    setLoading(true);
+  // silent = recarrega sem mostrar o spinner (evita o re-mount da lista, que joga o scroll pro topo)
+  const load = (silent = false) => {
+    if (!silent) setLoading(true);
     Promise.all([api.get('/items'), api.get('/categories')])
       .then(([ir, cr]) => { setItems(ir.data); setCategories(cr.data); })
-      .finally(() => setLoading(false));
+      .finally(() => { if (!silent) setLoading(false); });
   };
-  useEffect(load, []);
+  useEffect(() => { load(); }, []);
 
   const openNew  = () => { setEditing(null); setForm(EMPTY_FORM); setShowForm(true); };
   const openEdit = (item) => {
@@ -81,13 +82,20 @@ export default function AdminItems() {
       if (editing) await api.put(`/items/${editing.id}`, payload);
       else          await api.post('/items', payload);
       showToast(editing ? 'Item atualizado' : 'Item criado', 'success');
-      setShowForm(false); load();
+      setShowForm(false); load(true);
     } catch { showToast('Erro ao salvar', 'error'); }
   };
 
+  // Atualiza na hora e só reverte se a API recusar — sem spinner, sem perder o scroll.
   const handleToggle = async (item) => {
-    await api.put(`/items/${item.id}`, { active: !item.active });
-    load();
+    const next = !item.active;
+    setItems(is => is.map(i => i.id === item.id ? { ...i, active: next } : i));
+    try {
+      await api.put(`/items/${item.id}`, { active: next });
+    } catch {
+      setItems(is => is.map(i => i.id === item.id ? { ...i, active: !next } : i));
+      showToast('Erro ao alterar status', 'error');
+    }
   };
 
   const handleDelete = async (item) => {
@@ -100,7 +108,7 @@ export default function AdminItems() {
     if (!ok) return;
     await api.delete(`/items/${item.id}`);
     showToast('Item removido', 'success');
-    load();
+    load(true);
   };
 
   const sortItems = (a, b) => (a.order - b.order) || a.name.localeCompare(b.name);
@@ -128,7 +136,7 @@ export default function AdminItems() {
     );
     handleDragEnd();
     api.put('/items/reorder', { ids: reordered })
-      .catch(() => { showToast('Erro ao salvar ordem', 'error'); load(); });
+      .catch(() => { showToast('Erro ao salvar ordem', 'error'); load(true); });
   };
 
   if (loading) return <div style={{padding:40,display:'flex',justifyContent:'center'}}><div className="spinner"/></div>;

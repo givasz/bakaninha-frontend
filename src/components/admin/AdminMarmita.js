@@ -11,8 +11,10 @@ export default function AdminMarmita() {
   const [loading, setLoading] = useState(true);
   const { showToast } = useToast();
 
-  const loadAll = async () => {
-    setLoading(true);
+  // silent = recarrega sem mostrar o spinner. Sem isso, qualquer reload troca a tela
+  // inteira pelo spinner e o scroll volta pro topo a cada ativar/desativar.
+  const loadAll = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const [sr, gr, ir] = await Promise.all([
         api.get('/marmita/sizes'),
@@ -22,8 +24,9 @@ export default function AdminMarmita() {
       setSizes(sr.data);
       setGroups(gr.data);
       setItems(ir.data);
-    } finally { setLoading(false); }
+    } finally { if (!silent) setLoading(false); }
   };
+  const reloadSilent = () => loadAll(true);
   useEffect(() => { loadAll(); }, []);
 
   if (loading) return <div style={{padding:40,display:'flex',justifyContent:'center'}}><div className="spinner"/></div>;
@@ -42,9 +45,9 @@ export default function AdminMarmita() {
         </button>
       </div>
 
-      {tab === 'items'  && <ItemsTab  items={items}  groups={groups} sizes={sizes} reload={loadAll} showToast={showToast} />}
-      {tab === 'groups' && <GroupsTab groups={groups} sizes={sizes}  reload={loadAll} showToast={showToast} />}
-      {tab === 'sizes'  && <SizesTab  sizes={sizes}                    reload={loadAll} showToast={showToast} />}
+      {tab === 'items'  && <ItemsTab  items={items}  groups={groups} sizes={sizes} setItems={setItems} reload={reloadSilent} showToast={showToast} />}
+      {tab === 'groups' && <GroupsTab groups={groups} sizes={sizes}  reload={reloadSilent} showToast={showToast} />}
+      {tab === 'sizes'  && <SizesTab  sizes={sizes} setSizes={setSizes}  reload={reloadSilent} showToast={showToast} />}
     </div>
   );
 }
@@ -52,7 +55,7 @@ export default function AdminMarmita() {
 /* ──────────────────────────────────────────────────────────
    ITEMS TAB — global items grouped by their itemGroup
    ────────────────────────────────────────────────────────── */
-function ItemsTab({ items, groups, sizes, reload, showToast }) {
+function ItemsTab({ items, groups, sizes, setItems, reload, showToast }) {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [filter, setFilter] = useState('');
@@ -81,11 +84,16 @@ function ItemsTab({ items, groups, sizes, reload, showToast }) {
     setShowForm(true);
   };
 
+  // Atualiza na hora e só reverte se a API recusar — sem spinner, sem perder o scroll.
   const handleToggle = async (it) => {
+    const next = !it.active;
+    setItems(is => is.map(i => i.id === it.id ? { ...i, active: next } : i));
     try {
-      await api.put(`/marmita/items/${it.id}`, { active: !it.active });
-      reload();
-    } catch { showToast('Erro ao alternar', 'error'); }
+      await api.put(`/marmita/items/${it.id}`, { active: next });
+    } catch {
+      setItems(is => is.map(i => i.id === it.id ? { ...i, active: !next } : i));
+      showToast('Erro ao alternar', 'error');
+    }
   };
 
   const handleDelete = async (it) => {
@@ -516,7 +524,7 @@ function GroupsTab({ groups, sizes, reload, showToast }) {
 /* ──────────────────────────────────────────────────────────
    SIZES TAB — basic CRUD for marmita sizes
    ────────────────────────────────────────────────────────── */
-function SizesTab({ sizes, reload, showToast }) {
+function SizesTab({ sizes, setSizes, reload, showToast }) {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -539,8 +547,14 @@ function SizesTab({ sizes, reload, showToast }) {
   };
 
   const handleToggle = async (s) => {
-    await api.put(`/marmita/sizes/${s.id}`, { active: !s.active });
-    reload();
+    const next = !s.active;
+    setSizes(ss => ss.map(x => x.id === s.id ? { ...x, active: next } : x));
+    try {
+      await api.put(`/marmita/sizes/${s.id}`, { active: next });
+    } catch {
+      setSizes(ss => ss.map(x => x.id === s.id ? { ...x, active: !next } : x));
+      showToast('Erro ao alterar status', 'error');
+    }
   };
 
   const handleDelete = async (s) => {

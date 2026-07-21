@@ -17,9 +17,10 @@ export default function AdminCategories() {
 
   const imgSrc = (url) => url ? (url.startsWith('http') ? url : `${API_URL}${url}`) : null;
 
-  const load = () => {
-    setLoading(true);
-    api.get('/categories').then(r => setCategories(r.data)).finally(() => setLoading(false));
+  // silent = recarrega sem mostrar o spinner (evita o re-mount da lista, que joga o scroll pro topo)
+  const load = (silent = false) => {
+    if (!silent) setLoading(true);
+    api.get('/categories').then(r => setCategories(r.data)).finally(() => { if (!silent) setLoading(false); });
   };
   useEffect(load, []);
 
@@ -44,13 +45,20 @@ export default function AdminCategories() {
       if (editing) await api.put(`/categories/${editing.id}`, payload);
       else          await api.post('/categories', payload);
       showToast(editing ? 'Categoria atualizada' : 'Categoria criada', 'success');
-      setShowForm(false); load();
+      setShowForm(false); load(true);
     } catch { showToast('Erro ao salvar', 'error'); }
   };
 
+  // Atualiza na hora e só reverte se a API recusar — sem spinner, sem perder o scroll.
   const handleToggle = async (cat) => {
-    await api.put(`/categories/${cat.id}`, { active: !cat.active });
-    load();
+    const next = !cat.active;
+    setCategories(cs => cs.map(c => c.id === cat.id ? { ...c, active: next } : c));
+    try {
+      await api.put(`/categories/${cat.id}`, { active: next });
+    } catch {
+      setCategories(cs => cs.map(c => c.id === cat.id ? { ...c, active: !next } : c));
+      showToast('Erro ao alterar status', 'error');
+    }
   };
 
   const handleDelete = async (cat) => {
@@ -63,7 +71,7 @@ export default function AdminCategories() {
     if (!ok) return;
     await api.delete(`/categories/${cat.id}`);
     showToast('Categoria removida', 'success');
-    load();
+    load(true);
   };
 
   if (loading) return <div style={{padding:40,display:'flex',justifyContent:'center'}}><div className="spinner"/></div>;
