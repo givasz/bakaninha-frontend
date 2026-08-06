@@ -7,7 +7,6 @@ import { ConfirmProvider } from './context/ConfirmContext';
 import Navbar from './components/Navbar';
 import ScheduleBar from './components/ScheduleBar';
 import WhatsAppFab from './components/WhatsAppFab';
-import Watermark from './components/Watermark';
 import MenuPage from './pages/MenuPage';
 import MarmitaPage from './pages/MarmitaPage';
 import CheckoutPage from './pages/CheckoutPage';
@@ -73,7 +72,6 @@ function AppRoutes() {
                 <Route path="*"         element={<Navigate to="/" replace />} />
               </Routes>
             </main>
-            <Watermark />
           </div>
         } />
       </Routes>
